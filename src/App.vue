@@ -8,8 +8,7 @@ import NavbarPersonal from './components/navbarPersonal.vue'
 <template>
   <component  :is="
       route.meta.showAdminNav ? NavBarAdministrador :
-      route.meta.showConferencistaNav ? NavBarConferencista :
-      route.meta.showAsistenteNav ? NavbarPersonal :
+      route.meta.showPersonalNav ? NavbarPersonal :
       NavBarNormal
     "  @search="handleSearch" @location-change="handleLocationChange" />
     <RouterView />
