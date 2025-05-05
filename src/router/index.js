@@ -6,6 +6,7 @@ import HomeView from '../views/HomeView.vue'
 import PersonalHomeView from '@/views/personal/PersonalHomeView.vue'
 //administrador
 import AdministradorHomeView from '@/views/administrador/AdministradorHomeView.vue'
+import GestionPersonalView from '@/views/administrador/GestionPersonalView.vue'
 
 
 const router = createRouter({
@@ -40,6 +41,11 @@ const router = createRouter({
       name: 'administrador',
       component: AdministradorHomeView,
       meta: { showAdminNav: true }, // Mostrar navbar de asist
+    },
+    {
+      path: '/administrador/gestion-personal',
+      name: 'gestion-personal',
+      component: GestionPersonalView
     }
   ],
 })
