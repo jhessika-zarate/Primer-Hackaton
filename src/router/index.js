@@ -6,6 +6,7 @@ import HomeView from '../views/HomeView.vue'
 import PersonalHomeView from '@/views/personal/PersonalHomeView.vue'
 //administrador
 import AdministradorHomeView from '@/views/administrador/AdministradorHomeView.vue'
+import AdminContratos from '@/views/administrador/AdminContratos.vue'
 
 
 const router = createRouter({
@@ -39,6 +40,12 @@ const router = createRouter({
       path: '/administrador',
       name: 'administrador',
       component: AdministradorHomeView,
+      meta: { showAdminNav: true }, // Mostrar navbar de asist
+    },
+    {
+      path: '/contratos',
+      name: 'administrador',
+      component: AdminContratos,
       meta: { showAdminNav: true }, // Mostrar navbar de asist
     }
   ],
