@@ -3,6 +3,7 @@ import { RouterLink, RouterView, useRoute } from 'vue-router'
 import NavBarNormal from './components/navbar.vue'
 import NavBarAdministrador from './components/navbarAdministrador.vue'
 import NavbarPersonal from './components/navbarPersonal.vue'
+const route = useRoute()
 </script>
 
 <template>
