@@ -10,15 +10,16 @@
                 v-model="filterName"
                 placeholder="Buscar por nombre..."
                 />
-                <select v-model="filterType">
-                <option value="">Todos los tipos</option>
-                <option value="Consultorio">Consultorio</option>
-                <option value="Hospital Publico">Hospital Público</option>
-                <option value="Hospital Privado">Hospital Privado</option>
-                <option value="Hospital Mixto">Hospital Mixto</option>
-                <option value="Clinica Privada">Clínica Privada</option>
-                <option value="Clinica Publica">Clínica Pública</option>
-                </select>
+                <input
+                type="text"
+                v-model="filterApellidoPa"
+                placeholder="Buscar por apellido paterno..."
+                />
+                <input
+                type="text"
+                v-model="filterApellidoMa"
+                placeholder="Buscar por apellido materno..."
+                />
                 <button class="descargar" @click="prepareDownload('excel')">
                 Descargar Excel
                 </button>
@@ -34,27 +35,22 @@
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Tipo</th>
-                    <th>Misión</th>
-                    <th>Visión</th>
-                    <th>Descripción</th>
-                    <th>Colores</th>
-                    <th>Ubicación</th>
-                    <th>Precio</th>
+                    <th>Apellido Paterno</th>
+                    <th>Apellido Materno</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="center in filteredCenters" :key="center.idcentrosalud">
-                    <td data-label="ID">{{ center.idcentrosalud }}</td>
-                    <td data-label="Nombre">{{ center.nombre }}</td>
-                    <td data-label="Tipo">{{ center.tipo }}</td>
-                    <td data-label="Misión">{{ center.mision }}</td>
-                    <td data-label="Visión">{{ center.vision }}</td>
-                    <td data-label="Descripción">{{ center.descripcion }}</td>
-                    <td data-label="Colores">{{ center.colores }}</td>
-                    <td data-label="Ubicación">{{ center.ubicacion }}</td>
-                    <td data-label="Zona">
-                        {{ center.zona === '1' ? 'Barato' : center.zona === '2' ? 'Medio' : center.zona === '3' ? 'Caro' : 'Sin info' }}
-                    </td>
+                    <tr v-for="persona in personal" :key="persona.id_usuario">
+                    <td data-label="ID">{{ persona.id_usuario }}</td>
+                    <td data-label="Nombre">{{ persona.nombre }}</td>
+                    <td data-label="Apellido Paterno">{{ persona.apellido_paterno }}</td>
+                    <td data-label="Apellido Materno">{{ persona.apellido_materno }}</td>
+                    <td data-label="Correo">{{ persona.correo }}</td>
+                    <td data-label="Teléfono">{{ persona.telefono }}</td>
+                    <td data-label="Dirección">{{ persona.direccion }}</td>
                     </tr>
                 </tbody>
                 </table>
@@ -131,8 +127,7 @@
         gap: 1rem;
         justify-content: center;
     }
-    .filtros input,
-    .filtros select {
+    .filtros input {
         padding: 0.5rem;
         border: 1px solid #ccc;
         border-radius: 4px;
@@ -143,8 +138,7 @@
     .filtros input::placeholder {
         color: var(--color-secundario);
     }
-    .filtros input:focus,
-    .filtros select:focus {
+    .filtros input:focus {
         border-color: var(--color-terciario);
         outline: none;
     }
