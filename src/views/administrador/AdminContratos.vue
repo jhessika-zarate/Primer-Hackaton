@@ -370,22 +370,84 @@ export default {
             this.formulariosActivos = [];
             this.resultadosPublicos = "";
         },
-        async guardarConsulta() {
-            try {
-                // Generar PDF completo
-                await this.generarPDF('completo');
+        
 
-                // Generar PDF solo público si hay contenido público
-                if (this.tieneContenidoPublico()) {
-                    await this.generarPDF('publico');
-                }
+  async guardarConsulta() {
+    try {
+      // Crear objeto JSON con todos los datos del contrato
+      const contratoData = {
+        // Datos básicos del contrato
+        datosBasicos: { ...this.contrato },
+        
+        // Campos adicionales del sidebar
+        camposAdicionales: this.formulariosActivos.map(form => ({
+          nombre: form.nombre,
+          tipo: form.tipo,
+          contenido: form.data.resultados
+        })),
+        
+        // Metadatos
+        metadata: {
+          fechaGeneracion: new Date().toISOString(),
+          doctor: this.doctorName,
+          paciente: this.currentPatient
+        }
+      };
 
-                alert('PDFs generados exitosamente');
-            } catch (error) {
-                console.error('Error al generar PDFs:', error);
-                alert('Error al generar los PDFs');
-            }
+      // Convertir a JSON
+      const jsonData = JSON.stringify(contratoData, null, 2);
+      console.log(JSON.stringify(contratoData, null, 2) );
+      // Crear blob para descarga
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      // Crear enlace de descarga
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contrato_${this.contrato.nombre}_${new Date().getTime()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      
+      // Limpiar
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+
+      // También podrías enviar este JSON a tu backend si lo necesitas
+      // await this.enviarJSONAlBackend(contratoData);
+
+      alert('Datos del contrato guardados en formato JSON');
+      
+    } catch (error) {
+      console.error('Error al guardar los datos:', error);
+      alert('Error al guardar los datos');
+    }
+  },
+
+  // Método opcional para enviar a un backend
+  async enviarJSONAlBackend(data) {
+    try {
+      const response = await fetch('tu-endpoint-api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) throw new Error('Error en la respuesta del servidor');
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error al enviar al backend:', error);
+      throw error;
+    }
+  },
+
+
+
+
 
         tieneContenidoPublico() {
             // Verificar si hay resultados públicos
