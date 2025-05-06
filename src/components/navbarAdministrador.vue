@@ -9,22 +9,15 @@
 
       <!-- Navegación principal -->
       <ul class="nav-links">
-        <li><router-link to="/">Inicio</router-link></li>
-        <li><router-link to="/conferencias">Conferencias</router-link></li>
-
-        <li><router-link to="/login">Login</router-link></li>
+        <li><router-link to="/administrador/gestion-personal">Gestión Personal</router-link></li>
+        <li><router-link to="/">Ver perfil</router-link></li>
+        <li><router-link to="/logout">Cerrar Sesión</router-link></li>
       </ul>
 
       <!-- Controles de búsqueda y ubicació   n -->
       <!-- Controles de búsqueda y ubicació   n -->
       <div class="nav-controls">
         <div class="search-box">
-          <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Buscar conferencias..."
-            @keyup.enter="handleSearch"
-          />
           <button @click="handleSearch">
             <i class="fas fa-search"></i>
           </button>
@@ -36,16 +29,6 @@
             aria-hidden="true"
             style="color: red; font-size: 1.3rem"
           ></i>
-          <select v-model="selectedDepartment" @change="handleLocationChange">
-            <option value="">Todo Bolivia</option>
-            <option
-              v-for="department in bolivianDepartments"
-              :key="department"
-              :value="department"
-            >
-              {{ department }}
-            </option>
-          </select>
         </div>
       </div>
 
