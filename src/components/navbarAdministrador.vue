@@ -10,7 +10,8 @@
       <!-- Navegación principal -->
       <ul class="nav-links">
         <li><router-link to="/">Inicio</router-link></li>
-        <li><router-link to="/conferencias">Conferencias</router-link></li>
+        <li><router-link to="/conferencias">Personal</router-link></li>
+        <li><router-link to="/conferencias">Contratonuevo</router-link></li>
 
         <li><router-link to="/login">Login</router-link></li>
       </ul>

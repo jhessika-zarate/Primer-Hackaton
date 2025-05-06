@@ -8,6 +8,8 @@ import PersonalContratoView from '@/views/personal/PersonalContratoView.vue'
 import PersonalPerfilView from '@/views/personal/PersonalPerfilView.vue'
 //administrador
 import AdministradorHomeView from '@/views/administrador/AdministradorHomeView.vue'
+import AdminContratos from '@/views/administrador/AdminContratos.vue'
+import GestionPersonalView from '@/views/administrador/GestionPersonalView.vue'
 
 
 const router = createRouter({
@@ -61,6 +63,16 @@ path: '/personal/perfil',
       name: 'administrador',
       component: AdministradorHomeView,
       meta: { showAdminNav: true }, // Mostrar navbar de asist
+    },
+    {
+      path: '/contratos',
+      name: 'administrador',
+      component: AdminContratos,
+      meta: { showAdminNav: true }, // Mostrar navbar de asist
+    },{
+      path: '/administrador/gestion-personal',
+      name: 'gestion-personal',
+      component: GestionPersonalView
     }
   ],
 })
