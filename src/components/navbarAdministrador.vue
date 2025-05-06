@@ -1,54 +1,29 @@
 <template>
   <nav class="navbar">
     <div class="container">
-      administrador
-      <!-- Logo -->
-      <router-link to="/" class="logo">
-        <img src="" alt="Logo" />
-      </router-link>
+      <h1 class="navbar-title">Administrador</h1>
 
       <!-- Navegación principal -->
       <ul class="nav-links">
-        <li><router-link to="/">Inicio</router-link></li>
-        <li><router-link to="/conferencias">Personal</router-link></li>
-        <li><router-link to="/conferencias">Contratonuevo</router-link></li>
-
-        <li><router-link to="/login">Login</router-link></li>
+        <li>
+          <router-link
+            to="/administrador/gestion-personal"
+            exact-active-class="active-link"
+          >
+            Gestión Personal
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/administrador/perfil" exact-active-class="active-link">
+            Ver Perfil
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/" exact-active-class="active-link" class="logout">
+            Cerrar Sesión
+          </router-link>
+        </li>
       </ul>
-
-      <!-- Controles de búsqueda y ubicació   n -->
-      <!-- Controles de búsqueda y ubicació   n -->
-      <div class="nav-controls">
-        <div class="search-box">
-          <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Buscar conferencias..."
-            @keyup.enter="handleSearch"
-          />
-          <button @click="handleSearch">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-
-        <div class="location-selector">
-          <i
-            class="fas fa-map-marker"
-            aria-hidden="true"
-            style="color: red; font-size: 1.3rem"
-          ></i>
-          <select v-model="selectedDepartment" @change="handleLocationChange">
-            <option value="">Todo Bolivia</option>
-            <option
-              v-for="department in bolivianDepartments"
-              :key="department"
-              :value="department"
-            >
-              {{ department }}
-            </option>
-          </select>
-        </div>
-      </div>
 
       <!-- Menú móvil -->
       <button class="mobile-menu-btn" @click="toggleMobileMenu">
@@ -110,6 +85,8 @@ export default {
   position: fixed;
   font-size: 1.3rem;
   top: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -118,20 +95,18 @@ export default {
 .container {
   max-width: 1800px;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
+  display: flex; 
+  justify-content: space-evenly;
   align-items: center;
   padding: 0 1rem;
-}
-
-.logo img {
-  height: 80px;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .nav-links {
   display: flex;
   gap: 2rem;
   list-style: none;
+  font-size: 1rem;
 }
 
 .nav-links a {
@@ -141,7 +116,10 @@ export default {
 }
 
 .nav-links a:hover {
-  color: #84b7c2;
+  color: var(--color-texto-claro);
+  background: var(--color-terciario);
+  border-radius: 8px;
+  padding: 0.5rem;
 }
 
 .nav-controls {
@@ -217,6 +195,26 @@ export default {
 .slide-down-leave-to {
   opacity: 0;
   transform: translateY(-20px);
+}
+
+.logout {
+  color: var(--color-texto-claro);
+  background-color: var(--color-accento);
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+.navbar-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: var(--color-primario);
+  margin-right: 2rem;
+}
+
+.nav-links a.active-link {
+  border-bottom: 2px solid var(--color-accento);
 }
 
 @media (max-width: 768px) {
