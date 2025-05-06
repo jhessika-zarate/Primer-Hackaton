@@ -10,7 +10,7 @@ import PersonalPerfilView from '@/views/personal/PersonalPerfilView.vue'
 import AdministradorHomeView from '@/views/administrador/AdministradorHomeView.vue'
 import AdminContratos from '@/views/administrador/AdminContratos.vue'
 import GestionPersonalView from '@/views/administrador/GestionPersonalView.vue'
-
+import AdministradorPerfil from '@/views/administrador/AdministradorPerfil.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -73,6 +73,12 @@ path: '/personal/perfil',
       path: '/administrador/gestion-personal',
       name: 'gestion-personal',
       component: GestionPersonalView
+    },
+    {
+      path: '/administrador/perfil',
+      name: 'administrador-perfil',
+      component: AdministradorPerfil,
+    
     }
   ],
 })

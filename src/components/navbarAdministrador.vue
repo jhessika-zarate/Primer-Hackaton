@@ -14,12 +14,12 @@
           </router-link>
         </li>
         <li>
-          <router-link to="/" exact-active-class="active-link">
+          <router-link to="/administrador/perfil" exact-active-class="active-link">
             Ver Perfil
           </router-link>
         </li>
         <li>
-          <router-link to="/logout" exact-active-class="active-link" class="logout">
+          <router-link to="/" exact-active-class="active-link" class="logout">
             Cerrar Sesión
           </router-link>
         </li>
