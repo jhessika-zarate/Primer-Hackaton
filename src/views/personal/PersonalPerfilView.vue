@@ -67,33 +67,11 @@
 <div v-if="mostrarModal" class="modal-overlay">
   <div class="modal">
     <h2>Editar Perfil</h2>
-    <label>Nombre:</label>
-    <input type="text" v-model="formulario.nombre" />
-    
-    <label>Apellido Paterno:</label>
-    <input type="text" v-model="formulario.apellido_paterno" />
-    
-    <label>Apellido Materno:</label>
-    <input type="text" v-model="formulario.apellido_materno" />
-    
-    <label>Correo:</label>
-    <input type="email" v-model="formulario.correo" />
-    
-    <label>Contraseña:</label>
-    <input type="text" v-model="formulario.contrasenia" />
-    
-    <label>Rol:</label>
-    <select v-model="formulario.rol">
-      <option :value="1">Administrador</option>
-      <option :value="2">Personal</option>
-    </select>
-
-    <label>Teléfono:</label>
-    <input type="text" v-model="formulario.telefono" />
-    
-    <label>Dirección:</label>
-    <input type="text" v-model="formulario.direccion" />
-
+    <label>Nueva Contraseña:</label>
+    <input type="text" v-model="nuevaContrasenia" />
+    <label>Repetir Nueva Contraseña:</label>
+    <input type="text" v-model="nuevaContrasenia2" />
+   
     <div class="modal-buttons">
       <button @click="guardarCambios">Guardar</button>
       <button @click="cerrarModal">Cancelar</button>
@@ -103,6 +81,8 @@
 </template>
 
 <script>
+import { useUsuarioStore } from "@/stores/usuarioStore";
+import Swal from "sweetalert2"; // Importar SweetAlert2
 export default {
   name: "homeAdministradorView",
   components: {},
@@ -122,12 +102,21 @@ export default {
         direccion: "Calle Falsa 123",
         activo: true,
       },
+      nuevaContrasenia: "",
+      nuevaContrasenia2: "",
+
+      listaUsuarios: null,
 
       mostrarModal: false,
     formulario: {},
+
+    idUsuario: 10000,
     };
   },
-  mounted() {},
+  mounted() {
+this.obtenerUsuario();
+//quiero que de la listaUsuarios busque el usaurio con id_usuario que consida con idUsuario
+      },
   methods: {
     abrirModal() {
        
@@ -140,18 +129,52 @@ export default {
   cerrarModal() {
     this.mostrarModal = false;
   },
-  guardarCambios() {
-    this.usuario = { ...this.formulario }; // Actualiza los datos
+  async guardarCambios() {
+    if (this.nuevaContrasenia !== this.nuevaContrasenia2) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+    let nuevoEdit;
+    nuevoEdit={
+        id_usuario: this.usuario.id_usuario,
+        contrasenia: this.nuevaContrasenia,
+    }
+    const response= await this.usuarioStore.cambiarContrasenia(nuevoEdit);
+    console.log("Respuesta del servidor:", response);
+if (response) {
+      Swal.fire({
+        icon: "success",
+        title: "Éxito",
+        text: "Contraseña actualizada correctamente",
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo actualizar la contraseña",
+      });
+    }
     this.mostrarModal = false;
+    this.nuevaContrasenia = "";
+    this.nuevaContrasenia2 = "";
   },
+  async obtenerUsuario(){
+    this.listaUsuarios = await this.usuarioStore.getUsuarios();
+    console.log("Lista de usuarios:", this.listaUsuarios);
+  
+
+    this.usuario = this.listaUsuarios.find(usuario => usuario.id_usuario === this.idUsuario);
+    console.log("Usuario encontrado:", this.usuario);
+
+}
   },
   computed: {
    
   },
   setup() {
-    //const facturaStore = useFacturaStore();
+    const usuarioStore = useUsuarioStore();
     return {
-      //  facturaStore,
+       usuarioStore
     };
   },
 };
