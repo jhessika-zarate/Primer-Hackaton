@@ -79,16 +79,23 @@
             </div>
         </div>
     
-        <!-- Add/Edit Persona Modal -->
         <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
             <div class="modal">
             <h3>{{ isEditMode ? 'Editar Persona' : 'Añadir Persona' }}</h3>
+            <input v-model="persona.ci" placeholder="CI" />
             <input v-model="persona.nombre" placeholder="Nombre" />
             <input v-model="persona.apellido_paterno" placeholder="Apellido Paterno" />
             <input v-model="persona.apellido_materno" placeholder="Apellido Materno" />
             <input v-model="persona.correo" placeholder="Correo" type="email" />
             <input v-model="persona.telefono" placeholder="Teléfono" />
             <input v-model="persona.direccion" placeholder="Dirección" />
+            <!-- SI es alta (isEditMode === false), pedir contraseña -->
+            <input
+            v-if="!isEditMode"
+            v-model="persona.contrasenia"
+            placeholder="Contraseña"
+            type="password"
+            />
             <div class="modal-actions">
                 <button @click="savePersona">Guardar</button>
                 <button @click="closeModal">Cancelar</button>
@@ -101,154 +108,189 @@
 </template>
   
 <script>
-    import NavbarAdminComponent from '@/components/navbarAdministrador.vue'
-    import ExcelJS from 'exceljs'
-    import jsPDF from 'jspdf'
-    import autoTable from 'jspdf-autotable'
-    
-    export default {
-        name: 'VistaPersonalAdmin',
-        components: { NavbarAdminComponent },
-        data() {
-        return {
-            personal: [],
-            persona: {
-            id_usuario: null,
-            nombre: '',
-            apellido_paterno: '',
-            apellido_materno: '',
-            correo: '',
-            telefono: '',
-            direccion: '',
-            activo: 1
-            },
-            filterName: '',
-            filterApellidoPa: '',
-            filterActivo: '',
-            showModal: false,
-            showDownloadModal: false,
-            isEditMode: false,
-            downloadType: '',
-            fileName: ''
-        }
-        },
-        computed: {
-        filteredPersonal() {
-            return this.personal.filter(p => {
-            const matchesName = p.nombre.toLowerCase().includes(this.filterName.toLowerCase())
-            const matchesPa = p.apellido_paterno.toLowerCase().includes(this.filterApellidoPa.toLowerCase())
-            const matchesActivo = this.filterActivo === '' || String(p.activo) === this.filterActivo
-            return matchesName && matchesPa && matchesActivo
-            })
-        }
-        },
-        methods: {
-        openDownloadModal(type) {
-            this.downloadType = type
-            this.fileName = `personal_${type}`
-            this.showDownloadModal = true
-        },
-        closeDownloadModal() {
-            this.showDownloadModal = false
-        },
-        confirmDownload() {
-            if (this.downloadType === 'excel') this.downloadExcel(this.fileName)
-            else this.downloadPDF(this.fileName)
-            this.closeDownloadModal()
-        },
-        cancelDownload() {
-            this.closeDownloadModal()
-        },
-        async downloadExcel(name) {
-            const workbook = new ExcelJS.Workbook()
-            const sheet = workbook.addWorksheet('Personal')
-            sheet.addRow(['CI', 'Nombre', 'Apellido Paterno', 'Apellido Materno', 'Correo', 'Teléfono', 'Dirección', 'Activo'])
-            this.filteredPersonal.forEach(p =>
-            sheet.addRow([
-                p.id_usuario,
-                p.nombre,
-                p.apellido_paterno,
-                p.apellido_materno,
-                p.correo,
-                p.telefono,
-                p.direccion,
-                p.activo ? 'Activo' : 'Inactivo'
-            ])
-            )
-            const buf = await workbook.xlsx.writeBuffer()
-            const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-            const url = URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = `${name}.xlsx`
-            a.click()
-            URL.revokeObjectURL(url)
-        },
-        downloadPDF(name) {
-            const doc = new jsPDF()
-            autoTable(doc, {
-            head: [['CI', 'Nombre', 'Apellido Paterno', 'Apellido Materno', 'Correo', 'Teléfono', 'Dirección', 'Activo']],
-            body: this.filteredPersonal.map(p => [
-                p.id_usuario,
-                p.nombre,
-                p.apellido_paterno,
-                p.apellido_materno,
-                p.correo,
-                p.telefono,
-                p.direccion,
-                p.activo ? 'Activo' : 'Inactivo'
-            ])
-            })
-            doc.save(`${name}.pdf`)
-        },
-        showAddModal() {
-            this.resetPersona()
-            this.isEditMode = false
-            this.showModal = true
-        },
-        showEditModal(p) {
-            this.persona = { ...p }
-            this.isEditMode = true
-            this.showModal = true
-        },
-        closeModal() {
-            this.showModal = false
-        },
-        savePersona() {
-            if (this.isEditMode) {
-            const idx = this.personal.findIndex(u => u.id_usuario === this.persona.id_usuario)
-            if (idx !== -1) this.personal.splice(idx, 1, { ...this.persona })
-            } else {
-            this.persona.id_usuario = Date.now()
-            this.personal.push({ ...this.persona })
-            }
-            this.closeModal()
-        },
-        toggleActivo(p) {
-            p.activo = p.activo === 1 ? 0 : 1
-        },
-        resetPersona() {
-            this.persona = { id_usuario: null, nombre: '', apellido_paterno: '', apellido_materno: '', correo: '', telefono: '', direccion: '', activo: 1 }
-        }
-        },
-        mounted() {
-        this.personal = [
-            { id_usuario: 1001, nombre: 'Ana', apellido_paterno: 'Gómez', apellido_materno: 'López', correo: 'ana.gomez@example.com', telefono: '78901234', direccion: 'Calle A #123', activo: 1 },
-            { id_usuario: 1002, nombre: 'Luis', apellido_paterno: 'Martínez', apellido_materno: 'Pérez', correo: 'luis.martinez@example.com', telefono: '71234567', direccion: 'Av. B #456', activo: 0 },
-            { id_usuario: 1003, nombre: 'María', apellido_paterno: 'Rodríguez', apellido_materno: 'Díaz', correo: 'maria.rodriguez@example.com', telefono: '79876543', direccion: 'Plaza C #789', activo: 1 },
-            { id_usuario: 1004, nombre: 'Carlos', apellido_paterno: 'Fernández', apellido_materno: 'García', correo: 'carlos.fernandez@example.com', telefono: '71234568', direccion: 'Calle D #123', activo: 1 },
-            { id_usuario: 1005, nombre: 'Elena', apellido_paterno: 'Hernández', apellido_materno: 'Ruiz', correo: 'elena.hernandez@example.com', telefono: '78901235', direccion: 'Av. E #456', activo: 0 },
-            { id_usuario: 1006, nombre: 'Jorge', apellido_paterno: 'López', apellido_materno: 'Martínez', correo: 'jorge.lopez@example.com', telefono: '79876544', direccion: 'Plaza F #789', activo: 1 },
-            { id_usuario: 1007, nombre: 'Lucía', apellido_paterno: 'Pérez', apellido_materno: 'Sánchez', correo: 'lucia.perez@example.com', telefono: '71234569', direccion: 'Calle G #321', activo: 0 },
-            { id_usuario: 1008, nombre: 'Miguel', apellido_paterno: 'Ramírez', apellido_materno: 'Torres', correo: 'miguel.ramirez@example.com', telefono: '78901236', direccion: 'Av. H #654', activo: 1 },
-            { id_usuario: 1009, nombre: 'Sofía', apellido_paterno: 'Gómez', apellido_materno: 'Vargas', correo: 'sofia.gomez@example.com', telefono: '79876545', direccion: 'Plaza I #987', activo: 1 },
-            { id_usuario: 1010, nombre: 'Diego', apellido_paterno: 'Martínez', apellido_materno: 'Castro', correo: 'diego.martinez@example.com', telefono: '71234570', direccion: 'Calle J #111', activo: 0 },
-            { id_usuario: 1011, nombre: 'Valeria', apellido_paterno: 'Rodríguez', apellido_materno: 'Morales', correo: 'valeria.rodriguez@example.com', telefono: '78901237', direccion: 'Av. K #222', activo: 1 },
-            { id_usuario: 1012, nombre: 'Andrés', apellido_paterno: 'Sánchez', apellido_materno: 'Ortega', correo: 'andres.sanchez@example.com', telefono: '79876546', direccion: 'Plaza L #333', activo: 1 },
-            { id_usuario: 1013, nombre: 'Camila', apellido_paterno: 'Torres', apellido_materno: 'Rojas', correo: 'camila.torres@example.com', telefono: '71234571', direccion: 'Calle M #444', activo: 0 }
-        ]
-        }
+import NavbarAdminComponent from '@/components/navbarAdministrador.vue'
+import { useUsuarioStore } from '@/stores/usuarioStore'
+import ExcelJS from 'exceljs'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+
+export default {
+  name: 'VistaPersonalAdmin',
+  components: { NavbarAdminComponent },
+  setup() {
+    const usuarioStore = useUsuarioStore()
+    return { usuarioStore }
+  },
+  data() {
+    return {
+      personal: [],
+      persona: {
+        idusuario: null,        // tu PK
+        ci: '',
+        nombre: '',
+        apellido_paterno: '',
+        apellido_materno: '',
+        correo: '',
+        contrasenia: '',
+        telefono: '',
+        direccion: '',
+        activo: 1
+      },
+      filterName: '',
+      filterApellidoPa: '',
+      filterActivo: '',
+      showModal: false,
+      showDownloadModal: false,
+      isEditMode: false,
+      downloadType: '',
+      fileName: ''
     }
+  },
+  methods: {
+    async fetchUsuarios() {
+      this.personal = await this.usuarioStore.getUsuarios()
+    },
+
+    showAddModal() {
+      this.resetPersona()
+      this.isEditMode = false
+      this.showModal = true
+    },
+
+    showEditModal(p) {
+      // Mapea tu PK desde backend (por ej. idusuario)
+      this.persona = {
+        idusuario: p.idusuario || p.id_usuario,
+        ci: p.ci,
+        nombre: p.nombre,
+        apellido_paterno: p.apellido_paterno,
+        apellido_materno: p.apellido_materno,
+        correo: p.correo,
+        contrasenia: '',  // vacío para no mostrar la real
+        telefono: p.telefono,
+        direccion: p.direccion,
+        activo: p.activo
+      }
+      this.isEditMode = true
+      this.showModal = true
+    },
+
+    async savePersona() {
+      try {
+        if (this.isEditMode) {
+          await this.usuarioStore.updateUsuarioData({
+            idusuario: this.persona.idusuario,
+            ci: this.persona.ci,
+            nombre: this.persona.nombre,
+            apellido_paterno: this.persona.apellido_paterno,
+            apellido_materno: this.persona.apellido_materno,
+            correo: this.persona.correo,
+            telefono: this.persona.telefono,
+            direccion: this.persona.direccion,
+            activo: this.persona.activo
+          })
+        } else {
+          await this.usuarioStore.registerUsuario({
+            ci: this.persona.ci,
+            nombre: this.persona.nombre,
+            apellido_paterno: this.persona.apellido_paterno,
+            apellido_materno: this.persona.apellido_materno,
+            correo: this.persona.correo,
+            contrasenia: this.persona.contrasenia,
+            telefono: this.persona.telefono,
+            direccion: this.persona.direccion
+          })
+        }
+
+        await this.fetchUsuarios()
+        this.closeModal()
+      } catch (err) {
+        console.error('Error al guardar/actualizar:', err.response?.data || err.message)
+      }
+    },
+
+    toggleActivo(p) {
+      p.activo = p.activo === 1 ? 0 : 1
+    },
+
+    resetPersona() {
+      this.persona = {
+        idusuario: null,
+        ci: '',
+        nombre: '',
+        apellido_paterno: '',
+        apellido_materno: '',
+        correo: '',
+        contrasenia: '',
+        telefono: '',
+        direccion: '',
+        activo: 1
+      }
+    },
+    closeModal() {
+      this.showModal = false
+    },
+    openDownloadModal(type) {
+      this.downloadType = type
+      this.fileName = `personal_${type}`
+      this.showDownloadModal = true
+    },
+    closeDownloadModal() {
+      this.showDownloadModal = false
+    },
+    confirmDownload() {
+      if (this.downloadType === 'excel') this.downloadExcel(this.fileName)
+      else this.downloadPDF(this.fileName)
+      this.closeDownloadModal()
+    },
+    async downloadExcel(name) {
+      const wb = new ExcelJS.Workbook()
+      const ws = wb.addWorksheet('Personal')
+      ws.addRow(['CI','Nombre','Apellido P.','Apellido M.','Correo','Teléfono','Dirección','Activo'])
+      this.filteredPersonal.forEach(p => {
+        ws.addRow([
+          p.ci,
+          p.nombre,
+          p.apellido_paterno,
+          p.apellido_materno,
+          p.correo,
+          p.telefono,
+          p.direccion,
+          p.activo ? 'Activo' : 'Inactivo'
+        ])
+      })
+      const buf = await wb.xlsx.writeBuffer()
+      const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url; a.download = `${name}.xlsx`; a.click()
+      URL.revokeObjectURL(url)
+    },
+    downloadPDF(name) {
+      const doc = new jsPDF()
+      autoTable(doc, {
+        head: [['CI','Nombre','Apellido P.','Apellido M.','Correo','Teléfono','Dirección','Activo']],
+        body: this.filteredPersonal.map(p => [
+          p.ci,p.nombre,p.apellido_paterno,p.apellido_materno,
+          p.correo,p.telefono,p.direccion,p.activo?'Activo':'Inactivo'
+        ])
+      })
+      doc.save(`${name}.pdf`)
+    }
+  },
+  computed: {
+    filteredPersonal() {
+      return this.personal.filter(p => {
+        return p.nombre.toLowerCase().includes(this.filterName.toLowerCase()) &&
+               p.apellido_paterno.toLowerCase().includes(this.filterApellidoPa.toLowerCase()) &&
+               (this.filterActivo === '' || String(p.activo) === this.filterActivo)
+      })
+    }
+  },
+  async mounted() {
+    await this.fetchUsuarios()
+  }
+}
 </script>
   
 <style scoped>
