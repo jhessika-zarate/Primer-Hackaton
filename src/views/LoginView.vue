@@ -43,9 +43,7 @@
         </div>
 
         <div class="acciones-formulario">
-          <button @click="afiliarte()" class="boton boton-primario">
-            Solicitar afiliarte
-          </button>
+        
           <button @click="iniciarSesion()" class="boton boton-secundario">
             Iniciar sesión
           </button>
@@ -57,8 +55,8 @@
 
 <script>
 import Swal from "sweetalert2"; // Importar SweetAlert2
-
-export default {
+import Cookies from "js-cookie";
+import { useUsuarioStore } from "@/stores/usuarioStore";export default {
   components: {},
   data() {
     return {
@@ -72,7 +70,39 @@ export default {
   },
   computed: {},
 
-  methods: {},
+  methods: {
+    async iniciarSesion(){
+      const response = await this.usuarioStore.login(this.usuario);
+        console.log(response);
+        if (response) {
+           // Guardar en cookies
+           console.log(response.token);
+           console.log(response.idusuario);
+           Cookies.set("token", response.token, { expires: 7, secure: false, sameSite: "Lax" });
+Cookies.set("idusuario", response.idusuario, { expires: 7, secure: false, sameSite: "Lax" });
+
+          Swal.fire({
+            icon: "success",
+            title: "Inicio de sesión exitoso",
+            text: "Bienvenido a la aplicación",
+          });
+          this.$router.push({ name: "personal" });
+           // Guardar en cookies
+          } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Credenciales incorrectas",
+          });
+        }
+    }
+  },
+  setup() {
+    const usuarioStore = useUsuarioStore();
+    return {
+       usuarioStore
+    };
+  },
 };
 </script>
 <style>

@@ -1,16 +1,13 @@
 <template>
-    <div class="home">
+  <div class="home">
     <div class="container">
       <h1>Pagos obtenidos</h1>
-      
     </div>
     <div class="numeradores">
       <div class="numerador">
-
         <h3>Ganacias Total</h3>
         <span>{{ GanaciasHospital }}Bs</span>
       </div>
-      
     </div>
     <!--buscador de fecha
       <div class="switch-button">
@@ -33,26 +30,23 @@
           />
         </div>
       </div>-->
-    <div class="switch-button">
-      <div class="switch-toggle" :class="{
-        past: selected === 'Propias',
-        today: selected === 'Aseguradoras',
-      }"></div>
-      <div class="switch-option" @click="selected = 'Propias'">
-        Demás
-      </div>
-      <div class="switch-option" @click="selected = 'Aseguradoras'">Últimas 3</div>
-    </div>
-    <div class="container-cita" v-if="filterPacientes.length > 0" :class="{
-      pastcontenedor: selected === 'Propias',
-      todaycontenedor: selected === 'Aseguradoras',
-    }">
-      <div v-for="persona in filterPagos" :key="persona" class="cita">
+  
+    <div
+      class="container-cita"
+      v-if="filterPacientes.length > 0"
+      :class="{
+        pastcontenedor: selected === 'Propias',
+        todaycontenedor: selected === 'Aseguradoras',
+      }"
+    >
+      <div v-for="persona in this.pagos" :key="persona" class="cita">
         <div class="a-box">
           <div class="img-container">
             <div class="img-inner">
               <div class="inner-skew">
-                <img src="https://cdn-icons-png.flaticon.com/512/411/411745.png" />
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/411/411745.png"
+                />
               </div>
             </div>
           </div>
@@ -62,11 +56,14 @@
             <div>
               <span>
                 <span class="atributo">Fecha:</span>
-                {{ persona.fecha_pago }}</span>
+                {{ persona.fecha_pago }}</span
+              >
               <br />
-             
-              <span><span class="atributo">Dias trabajados:</span>
-                {{ persona.dias_trabajo }}</span>
+
+              <span
+                ><span class="atributo">Dias trabajados:</span>
+                {{ persona.dias_trabajo }}</span
+              >
             </div>
           </div>
         </div>
@@ -74,56 +71,54 @@
       </div>
     </div>
   </div>
-  </template>
-
+</template>
 
 <script>
-
+import { usePagosStore } from "@/stores/pagosStore";
 export default {
   name: "homeAdministradorView",
-  components: {
-   
-  },
+  components: {},
   data() {
     return {
       hoverColor: "#D62929",
       searchQuery: "",
       selected: "Propias",
-/**pagos */
-pagos:[
-  {
-    id_pago: 1,
-    dias_trabajo: 5,
-    id_usuario: 2,
-    id_contrato: 1,
-    fecha_pago: "2023-10-01",
-    pago_total: 1000,
-  },
-  {
-    id_pago: 2,
-    dias_trabajo: 3,
-    id_usuario: 2,
-    id_contrato: 1,
-    fecha_pago: "2023-10-02",
-    pago_total: 800,
-  },
-  {
-    id_pago: 3,
-    dias_trabajo: 4,
-    id_usuario: 2,
-    id_contrato: 1,
-    fecha_pago: "2023-10-03",
-    pago_total: 1200,
-  },
-  {
-    id_pago: 4,
-    dias_trabajo: 2,
-    id_usuario: 2,
-    id_contrato: 1,
-    fecha_pago: "2023-10-04",
-    pago_total: 600,
-  },
-],
+      idUsuario: 10000,
+      /**pagos */
+      pagos: [
+        {
+          id_pago: 1,
+          dias_trabajo: 5,
+          id_usuario: 2,
+          id_contrato: 1,
+          fecha_pago: "2023-10-01",
+          pago_total: 1000,
+        },
+        {
+          id_pago: 2,
+          dias_trabajo: 3,
+          id_usuario: 2,
+          id_contrato: 1,
+          fecha_pago: "2023-10-02",
+          pago_total: 800,
+        },
+        {
+          id_pago: 3,
+          dias_trabajo: 4,
+          id_usuario: 2,
+          id_contrato: 1,
+          fecha_pago: "2023-10-03",
+          pago_total: 1200,
+        },
+        {
+          id_pago: 4,
+          dias_trabajo: 2,
+          id_usuario: 2,
+          id_contrato: 1,
+          fecha_pago: "2023-10-04",
+          pago_total: 600,
+        },
+      ],
 
       citas: [
         {
@@ -183,14 +178,28 @@ pagos:[
           seguro: false,
         },
       ],
-
     };
   },
   mounted() {
-   
+    const idDesdeCookie = Cookies.get("idusuario");
+  if (idDesdeCookie) {
+    this.idUsuario = parseInt(idDesdeCookie); // Asegurarse que sea número
+    this.obtenerUsuario();
+  } else {
+    console.warn("No se encontró el idusuario en las cookies");
+  }
+    this.obtenerPagos();
   },
   methods: {
- 
+    async obtenerPagos() {
+      this.pagos = await this.pagosStore.getPagos();
+      
+      //quiero que encuentres  todos los pagos que tengan el id_usuario igual a idUsuario
+      this.pagos = this.pagos.filter((pago) => pago.id_usuario === this.idUsuario); 
+      console.log(this.pagos);
+      //ordena por fecha
+      this.pagos.sort((a, b) => new Date(b.fecha_pago) - new Date(a.fecha_pago));
+    },
   },
   computed: {
     filterPacientes() {
@@ -217,12 +226,11 @@ pagos:[
         return acc;
       }, 0);
     },
-   
   },
   setup() {
-    //const facturaStore = useFacturaStore();
+    const pagosStore = usePagosStore();
     return {
-    //  facturaStore,
+      pagosStore,
     };
   },
 };
@@ -357,7 +365,8 @@ span {
   transition: background-color 0.3s ease;
 }
 
-.future {}
+.future {
+}
 
 /* Input Styles */
 /* el texto predeterminado del input */
@@ -414,7 +423,7 @@ span {
 .container-cita {
   padding: 10px;
   display: flex;
-
+margin-top: 2rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   flex-wrap: wrap;
   justify-content: center;
@@ -477,10 +486,12 @@ span {
   width: 100%;
   height: 100%;
   border-radius: 100px;
-  background: linear-gradient(to right,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.6) 50%,
-      rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
   transition: left 0.5s ease-in-out;
   pointer-events: none;
 }
@@ -489,7 +500,6 @@ span {
 .inner-skew:hover::before {
   left: 100%;
 }
-
 
 .text-container {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
@@ -501,8 +511,6 @@ span {
   font-size: 14px;
   padding-bottom: 1rem;
 }
-
-
 
 .text-container h3 {
   margin: -10px 0px 5px 0px;
@@ -558,11 +566,9 @@ span {
   justify-content: center;
   align-items: center;
   gap: 20px;
-
 }
 
 .numerador {
-
   transition: left 0.5s ease-in-out;
   pointer-events: none;
   background-color: #09ff0036;
