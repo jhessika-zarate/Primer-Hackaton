@@ -30,6 +30,15 @@ export const useUsuarioStore = defineStore('usuario', {
                 console.error('Error changing user state:', error);
             }
         },
+        async crearUsuario(usuarioJson) {
+            try {
+                const response = await axios.post(RutaApi + 'auth/register', usuarioJson);
+                console.log(response.data);
+                return response.data;
+            } catch (error) {
+                console.error('Error changing user state:', error);
+            }
+        },
 
         //post http://localhost:2000/api/auth/login
         async login(usuarioJson) {
