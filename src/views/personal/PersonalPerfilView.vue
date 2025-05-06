@@ -168,7 +168,7 @@ if (response) {
     this.nuevaContrasenia2 = "";
   },
   async obtenerUsuario(){
-    this.listaUsuarios = await this.usuarioStore.getUsuarios();
+    this.listaUsuarios = await this.usuarioStore.getUsuarios2();
     console.log("Lista de usuarios:", this.listaUsuarios);
   
 
