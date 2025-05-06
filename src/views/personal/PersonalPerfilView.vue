@@ -1,16 +1,44 @@
 <template>
-    <div class="home">
+  <div class="home">
     <div class="container">
-      <h1>Facturas de tu Centro de Salud</h1>
-      <span>Bienvenido a la plataforma de gestión de facturas</span>
-    </div>
+      <h1>PERFIL DE USUARIO</h1>
+        </div>  <button @click="abrirModal()" class="btn-editar">Editar</button>
+
     <div class="numeradores">
       <div class="numerador">
+        <div class="container-cita">
+          <div class="cita">
+            <div class="a-box">
+              <div class="img-container">
+                <div class="img-inner">
+                  <div class="inner-skew">
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/512/6073/6073873.png"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-container">
+        <h3>Nombre completo:</h3>
+          <span
+            >{{ usuario.nombre }} {{ usuario.apellido_paterno }}
+            {{ usuario.apellido_materno }}</span
+          >
+          <h3>Correo:</h3>
+          <span>{{ usuario.correo }}</span>
+          <h3>Contraseña:</h3>
+          <span>{{ usuario.contrasenia }}Bs</span>
+          <h3>Rol:</h3>
+          <span>{{ usuario.rol === 2 ? "Personal" : "Administrador" }}</span>
 
-        <h3>Ganacias Hospital</h3>
-        <span>{{ GanaciasHospital }}Bs</span>
+          <h3>Telefono:</h3>
+          <span>{{ usuario.telefono }}</span>
+          <h3>Dirección:</h3>
+          <span>{{ usuario.direccion }}</span></div>
       </div>
-      
     </div>
     <!--buscador de fecha
       <div class="switch-button">
@@ -33,162 +61,97 @@
           />
         </div>
       </div>-->
-    <div class="switch-button">
-      <div class="switch-toggle" :class="{
-        past: selected === 'Propias',
-        today: selected === 'Aseguradoras',
-      }"></div>
-      <div class="switch-option" @click="selected = 'Propias'">
-        Propias
-      </div>
-      <div class="switch-option" @click="selected = 'Aseguradoras'">Aseguradoras</div>
-    </div>
-    <div class="container-cita" v-if="filterPacientes.length > 0" :class="{
-      pastcontenedor: selected === 'Propias',
-      todaycontenedor: selected === 'Aseguradoras',
-    }">
-      <div v-for="persona in filterPacientes" :key="persona" class="cita">
-        <div class="a-box">
-          <div class="img-container">
-            <div class="img-inner">
-              <div class="inner-skew">
-                <img src="https://cdn-icons-png.flaticon.com/512/411/411745.png" />
-              </div>
-            </div>
-          </div>
-          <div class="text-container">
-            <!--si es select la letra azul y sino verde -->
-            <h3>TOTAL: {{ persona.total }} Bs</h3>
-            <div>
-              <span>
-                <span class="atributo">Fecha:</span>
-                {{ persona.fecha }}</span>
-              <br />
-              <span v-if="persona.montoextra"><span class="atributo" >Extras:</span>
-                {{ persona.montoextra }} Bs</span>
-              <br v-if="persona.montoextra" />
-              <span><span class="atributo">Paciente:</span>
-                {{ persona.ci_paciente }}</span>
-            </div>
-          </div>
-        </div>
-        <div></div>
-      </div>
+  </div>
+
+  <!-- Modal -->
+<div v-if="mostrarModal" class="modal-overlay">
+  <div class="modal">
+    <h2>Editar Perfil</h2>
+    <label>Nombre:</label>
+    <input type="text" v-model="formulario.nombre" />
+    
+    <label>Apellido Paterno:</label>
+    <input type="text" v-model="formulario.apellido_paterno" />
+    
+    <label>Apellido Materno:</label>
+    <input type="text" v-model="formulario.apellido_materno" />
+    
+    <label>Correo:</label>
+    <input type="email" v-model="formulario.correo" />
+    
+    <label>Contraseña:</label>
+    <input type="text" v-model="formulario.contrasenia" />
+    
+    <label>Rol:</label>
+    <select v-model="formulario.rol">
+      <option :value="1">Administrador</option>
+      <option :value="2">Personal</option>
+    </select>
+
+    <label>Teléfono:</label>
+    <input type="text" v-model="formulario.telefono" />
+    
+    <label>Dirección:</label>
+    <input type="text" v-model="formulario.direccion" />
+
+    <div class="modal-buttons">
+      <button @click="guardarCambios">Guardar</button>
+      <button @click="cerrarModal">Cancelar</button>
     </div>
   </div>
-  </template>
-
+</div>
+</template>
 
 <script>
-
 export default {
   name: "homeAdministradorView",
-  components: {
-   
-  },
+  components: {},
   data() {
     return {
       hoverColor: "#D62929",
       searchQuery: "",
       selected: "Propias",
+      usuario: {
+        nombre: "Juan Perez",
+        apellido_paterno: "Gonzalez",
+        apellido_materno: "Lopez",
+        correo: "jhessika@gmail.com",
+        contrasenia: "123456",
+        rol: 1,
+        telefono: "77771234",
+        direccion: "Calle Falsa 123",
+        activo: true,
+      },
 
-      citas: [
-        {
-          ci_paciente: "777712",
-          fecha: "2023-10-01",
-          total: 100,
-          cantidadConsultas: 5,
-          seguro: true,
-        },
-        {
-          ci_paciente: "777713",
-          fecha: "2023-10-02",
-          total: 200,
-          cantidadConsultas: 3,
-          seguro: false,
-        },
-        {
-          ci_paciente: "777714",
-          fecha: "2023-10-03",
-          total: 150,
-          cantidadConsultas: 4,
-          seguro: true,
-        },
-        {
-          ci_paciente: "777715",
-          fecha: "2023-10-04",
-          total: 250,
-          cantidadConsultas: 2,
-          seguro: false,
-        },
-        {
-          ci_paciente: "777715",
-          fecha: "2023-10-04",
-          total: 250,
-          cantidadConsultas: 2,
-          seguro: false,
-        },
-        {
-          ci_paciente: "777715",
-          fecha: "2023-10-04",
-          total: 250,
-          cantidadConsultas: 2,
-          seguro: false,
-        },
-        {
-          ci_paciente: "777715",
-          fecha: "2023-10-04",
-          total: 250,
-          cantidadConsultas: 2,
-          seguro: false,
-        },
-        {
-          ci_paciente: "777715",
-          fecha: "2023-10-04",
-          total: 250,
-          cantidadConsultas: 2,
-          seguro: false,
-        },
-      ],
-
+      mostrarModal: false,
+    formulario: {},
     };
   },
-  mounted() {
-   
-  },
+  mounted() {},
   methods: {
- 
+    abrirModal() {
+       
+    // Copia segura de los datos actuales
+    this.formulario = { ...this.usuario };
+    this.mostrarModal = true;
+    console.log("Abrir modal");
+    console.log(this.formulario);
+  },
+  cerrarModal() {
+    this.mostrarModal = false;
+  },
+  guardarCambios() {
+    this.usuario = { ...this.formulario }; // Actualiza los datos
+    this.mostrarModal = false;
+  },
   },
   computed: {
-    filterPacientes() {
-      if (this.selected === "Aseguradoras") {
-        console.log(this.citas.filter((card) => card.seguro));
-        return this.citas.filter((card) => card.seguro);
-      } else if (this.selected === "Propias") {
-        return this.citas.filter((card) => !card.seguro);
-      }
-    },
-    GanaciasHospital() {
-      return this.citas.reduce((acc, cita) => {
-        if (!cita.seguro) {
-          return acc + cita.total;
-        }
-        return acc;
-      }, 0);
-    },
-    CobrarAseguradoras() {
-      return this.citas.reduce((acc, cita) => {
-        if (cita.seguro) {
-          return acc + cita.total;
-        }
-        return acc;
-      }, 0);
-    },
+   
   },
   setup() {
     //const facturaStore = useFacturaStore();
     return {
-    //  facturaStore,
+      //  facturaStore,
     };
   },
 };
@@ -213,7 +176,7 @@ export default {
 .container {
   text-align: center;
   margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   /* Space for the footer */
 }
 
@@ -236,162 +199,9 @@ h1 {
 }
 
 span {
-  font-size: 1.4em;
+  font-size: 0.em;
   color: #000000;
 }
-
-/* Switch Button Styles */
-
-.switch-button {
-  margin: 20px auto;
-  display: flex;
-  background: #0070a456;
-  border-radius: 30px;
-  overflow: hidden;
-  width: 300px;
-  position: relative;
-  padding-top: 0.2rem;
-}
-
-.switch-button-tipo {
-  margin: 5px auto;
-  display: flex;
-  background: #0070a4;
-  border-radius: 30px;
-  overflow: hidden;
-  width: 200px;
-  position: relative;
-}
-
-.switch-button-tipo:hover {
-  background: #0070a4b5;
-  transition: background-color 0.3s ease;
-}
-
-.switch-option {
-  flex: 1;
-  text-align: center;
-  padding: 10px 0;
-  cursor: pointer;
-  font-size: 18px;
-  letter-spacing: 1px;
-  color: #ffffff;
-  position: relative;
-  padding-top: 0.5rem;
-  z-index: 2;
-}
-
-.switch-option-tipo {
-  flex: 1;
-  text-align: center;
-  padding-top: 0.5rem;
-  padding: 10px 0;
-  cursor: pointer;
-  font-size: 18px;
-  letter-spacing: 1px;
-  color: #ffffff;
-  position: relative;
-  z-index: 2;
-}
-
-.switch-toggle {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  color: #000;
-  width: 150px;
-  background: #0070a4;
-  border-radius: 30px;
-  transition: transform 300ms;
-}
-
-.past {
-  transform: translateX(0);
-}
-
-.today {
-  transform: translateX(150px);
-}
-
-.pastcontenedor {
-  background: #09ff0036;
-  transition: background-color 0.3s ease;
-}
-
-.todaycontenedor {
-  background: #fffc349d;
-  transition: background-color 0.3s ease;
-}
-
-.future {}
-
-/* Input Styles */
-/* el texto predeterminado del input */
-.comboText::placeholder {
-  color: #f6f6f6;
-  font-weight: 700;
-  font-size: 16px;
-  text-align: center;
-  opacity: 0.5;
-  /* Opacity for placeholder */
-}
-
-.comboText {
-  width: 100%;
-  height: 12px;
-
-  font-weight: 300;
-  border: 0px solid #0070a456;
-  color: #f6f6f6;
-  background-color: #0070a400;
-  border-radius: 5px;
-  font-size: 16px;
-  outline: none;
-  margin: 10px 0;
-
-  cursor: pointer;
-  justify-content: center;
-  text-align: center;
-}
-
-/* Cita Styles  que se ponga en 3 columnas*/
-.cita {
-  border-radius: 10px;
-  flex: auto;
-  width: 300px;
-  padding: 10px 10px 0px 40px;
-}
-
-/* centra el texto en una fila */
-.cita-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  width: 100%;
-}
-
-.cita-info h1 {
-  font-size: 1.5rem;
-  margin: 1rem 1rem 0 2rem;
-}
-
-.container-cita {
-  padding: 10px;
-  display: flex;
-
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: 80%;
-  border-radius: 10px;
-  gap: 20px;
-  max-height: 55vh;
-  overflow-y: auto;
-}
-
 /**Tarjeta cita */
 .a-box {
   display: inline-block;
@@ -443,10 +253,12 @@ span {
   width: 100%;
   height: 100%;
   border-radius: 100px;
-  background: linear-gradient(to right,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.6) 50%,
-      rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
   transition: left 0.5s ease-in-out;
   pointer-events: none;
 }
@@ -455,7 +267,6 @@ span {
 .inner-skew:hover::before {
   left: 100%;
 }
-
 
 .text-container {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
@@ -470,13 +281,10 @@ span {
 
 
 
-.text-container h3 {
-  margin: -10px 0px 5px 0px;
-  text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.102);
-
-  font-size: 25px;
-  font-weight: 700;
-  text-transform: uppercase;
+.text-container span {
+  font-size: 0.2em;
+  color: #000000;
+  font-weight: 500;
 }
 
 span {
@@ -485,53 +293,18 @@ span {
   font-weight: 500;
 }
 
-.atributo {
-  font-weight: 700;
-  color: #000000;
-}
-
-.Especialidad {
-  font-weight: 600;
-  color: #000000;
-  font-size: 1em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-}
-
-.Solicitud {
-  background-color: #0070a4;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 8px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.Solicitud:hover {
-  background-color: #0093d7;
-  transition: background-color 0.3s ease;
-}
-
 /**numeradores */
 .numeradores {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
-
 }
 
 .numerador {
-
   transition: left 0.5s ease-in-out;
   pointer-events: none;
-  background-color: #09ff0036;
+  background-color: #00e1ff36;
 
   border: 1px solid #07d30069;
   color: #0070a4;
@@ -540,21 +313,21 @@ span {
 
   border-radius: 10px;
   text-align: center;
-  width: 250px;
+  width: 320px;
 }
 
 .numerador h3 {
   font-size: 1.05em;
   font-weight: 600;
-  color: #0ead00;
+  color: #4a4a4a;
   text-transform: uppercase;
   text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.112);
   margin: 0;
 }
 
 .numerador span {
-  color: #0ead00;
-  font-size: 2.4rem;
+  color: #021700;
+  font-size: 1.4rem;
   font-weight: 600;
   text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.218);
 
@@ -606,4 +379,75 @@ span {
   display: inline-block;
   max-width: 100%; /* Asegura que el texto se ajuste al contenedor */
 }
+
+
+
+/**estulos para modal y boton */
+
+.btn-editar {
+  margin-top: 1rem;
+  background-color: #0070a4;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+.modal input,
+.modal select {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.4rem 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.modal-buttons button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background-color: #28a745;
+  color: white;
+}
+
+.modal-buttons button:last-child {
+  background-color: #dc3545;
+  color: white;
+}
+
 </style>
