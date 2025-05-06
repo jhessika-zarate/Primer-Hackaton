@@ -181,6 +181,13 @@ export default {
     };
   },
   mounted() {
+    const idDesdeCookie = Cookies.get("idusuario");
+  if (idDesdeCookie) {
+    this.idUsuario = parseInt(idDesdeCookie); // Asegurarse que sea número
+    this.obtenerUsuario();
+  } else {
+    console.warn("No se encontró el idusuario en las cookies");
+  }
     this.obtenerPagos();
   },
   methods: {

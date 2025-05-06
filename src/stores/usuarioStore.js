@@ -31,6 +31,17 @@ export const useUsuarioStore = defineStore('usuario', {
             }
         },
 
+        //post http://localhost:2000/api/auth/login
+        async login(usuarioJson) {
+            try {
+                const response = await axios.post(RutaApi + 'auth/login', usuarioJson);
+                console.log(response.data);
+                return response.data;
+            } catch (error) {
+                console.error('Error logging in:', error);
+            }
+        },
+
 
     },
 })

@@ -83,6 +83,8 @@
 <script>
 import { useUsuarioStore } from "@/stores/usuarioStore";
 import Swal from "sweetalert2"; // Importar SweetAlert2
+import Cookies from "js-cookie";
+
 export default {
   name: "homeAdministradorView",
   components: {},
@@ -114,6 +116,13 @@ export default {
     };
   },
   mounted() {
+    const idDesdeCookie = Cookies.get("idusuario");
+  if (idDesdeCookie) {
+    this.idUsuario = parseInt(idDesdeCookie); // Asegurarse que sea número
+    this.obtenerUsuario();
+  } else {
+    console.warn("No se encontró el idusuario en las cookies");
+  }
 this.obtenerUsuario();
 //quiero que de la listaUsuarios busque el usaurio con id_usuario que consida con idUsuario
       },
