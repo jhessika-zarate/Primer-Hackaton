@@ -1,13 +1,13 @@
 <template>
     <div class="home">
     <div class="container">
-      <h1>Facturas de tu Centro de Salud</h1>
-      <span>Bienvenido a la plataforma de gestión de facturas</span>
+      <h1>Pagos obtenidos</h1>
+      
     </div>
     <div class="numeradores">
       <div class="numerador">
 
-        <h3>Ganacias Hospital</h3>
+        <h3>Ganacias Total</h3>
         <span>{{ GanaciasHospital }}Bs</span>
       </div>
       
@@ -39,15 +39,15 @@
         today: selected === 'Aseguradoras',
       }"></div>
       <div class="switch-option" @click="selected = 'Propias'">
-        Propias
+        Demás
       </div>
-      <div class="switch-option" @click="selected = 'Aseguradoras'">Aseguradoras</div>
+      <div class="switch-option" @click="selected = 'Aseguradoras'">Últimas 3</div>
     </div>
     <div class="container-cita" v-if="filterPacientes.length > 0" :class="{
       pastcontenedor: selected === 'Propias',
       todaycontenedor: selected === 'Aseguradoras',
     }">
-      <div v-for="persona in filterPacientes" :key="persona" class="cita">
+      <div v-for="persona in filterPagos" :key="persona" class="cita">
         <div class="a-box">
           <div class="img-container">
             <div class="img-inner">
@@ -58,17 +58,15 @@
           </div>
           <div class="text-container">
             <!--si es select la letra azul y sino verde -->
-            <h3>TOTAL: {{ persona.total }} Bs</h3>
+            <h3>TOTAL: {{ persona.pago_total }} Bs</h3>
             <div>
               <span>
                 <span class="atributo">Fecha:</span>
-                {{ persona.fecha }}</span>
+                {{ persona.fecha_pago }}</span>
               <br />
-              <span v-if="persona.montoextra"><span class="atributo" >Extras:</span>
-                {{ persona.montoextra }} Bs</span>
-              <br v-if="persona.montoextra" />
-              <span><span class="atributo">Paciente:</span>
-                {{ persona.ci_paciente }}</span>
+             
+              <span><span class="atributo">Dias trabajados:</span>
+                {{ persona.dias_trabajo }}</span>
             </div>
           </div>
         </div>
@@ -91,6 +89,41 @@ export default {
       hoverColor: "#D62929",
       searchQuery: "",
       selected: "Propias",
+/**pagos */
+pagos:[
+  {
+    id_pago: 1,
+    dias_trabajo: 5,
+    id_usuario: 2,
+    id_contrato: 1,
+    fecha_pago: "2023-10-01",
+    pago_total: 1000,
+  },
+  {
+    id_pago: 2,
+    dias_trabajo: 3,
+    id_usuario: 2,
+    id_contrato: 1,
+    fecha_pago: "2023-10-02",
+    pago_total: 800,
+  },
+  {
+    id_pago: 3,
+    dias_trabajo: 4,
+    id_usuario: 2,
+    id_contrato: 1,
+    fecha_pago: "2023-10-03",
+    pago_total: 1200,
+  },
+  {
+    id_pago: 4,
+    dias_trabajo: 2,
+    id_usuario: 2,
+    id_contrato: 1,
+    fecha_pago: "2023-10-04",
+    pago_total: 600,
+  },
+],
 
       citas: [
         {
@@ -168,22 +201,23 @@ export default {
         return this.citas.filter((card) => !card.seguro);
       }
     },
+    filterPagos() {
+      // cuando this.selected === "Aseguradoras" se filtre los 3 primeros pagos
+      if (this.selected === "Aseguradoras") {
+        return this.pagos.filter((card) => card.id_pago <= 3);
+      } else if (this.selected === "Propias") {
+        return this.pagos.filter((card) => card.id_pago > 3);
+      }
+    },
     GanaciasHospital() {
-      return this.citas.reduce((acc, cita) => {
+      return this.pagos.reduce((acc, cita) => {
         if (!cita.seguro) {
-          return acc + cita.total;
+          return acc + cita.pago_total;
         }
         return acc;
       }, 0);
     },
-    CobrarAseguradoras() {
-      return this.citas.reduce((acc, cita) => {
-        if (cita.seguro) {
-          return acc + cita.total;
-        }
-        return acc;
-      }, 0);
-    },
+   
   },
   setup() {
     //const facturaStore = useFacturaStore();

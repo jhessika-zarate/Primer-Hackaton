@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar">
       <div class="container">
-        personal
+    
         <!-- Logo -->
         <router-link to="/" class="logo">
           <img src="" alt="Logo" />
@@ -9,44 +9,19 @@
   
         <!-- Navegación principal -->
         <ul class="nav-links">
-          <li><router-link to="/">Inicio</router-link></li>
-          <li><router-link to="/conferencias">Conferencias</router-link></li>
+          <li><router-link to="/personal">Pagos</router-link></li>
+          <li><router-link to="/personal/contrato">Contrato</router-link></li>
   
-          <li><router-link to="/login">Login</router-link></li>
+          <li><router-link to="/personal/perfil">Perfil</router-link></li>
         </ul>
   
         <!-- Controles de búsqueda y ubicació   n -->
         <!-- Controles de búsqueda y ubicació   n -->
         <div class="nav-controls">
           <div class="search-box">
-            <input
-              type="text"
-              v-model="searchQuery"
-              placeholder="Buscar conferencias..."
-              @keyup.enter="handleSearch"
-            />
-            <button @click="handleSearch">
-              <i class="fas fa-search"></i>
-            </button>
+          
           </div>
   
-          <div class="location-selector">
-            <i
-              class="fas fa-map-marker"
-              aria-hidden="true"
-              style="color: red; font-size: 1.3rem"
-            ></i>
-            <select v-model="selectedDepartment" @change="handleLocationChange">
-              <option value="">Todo Bolivia</option>
-              <option
-                v-for="department in bolivianDepartments"
-                :key="department"
-                :value="department"
-              >
-                {{ department }}
-              </option>
-            </select>
-          </div>
         </div>
   
         <!-- Menú móvil -->
