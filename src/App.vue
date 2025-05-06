@@ -19,5 +19,6 @@ const route = useRoute()
 :global(body) {
   background-color: #f9f0ed;
   font-family: 'Lato';
+  margin: 0%;
 }
 </style>

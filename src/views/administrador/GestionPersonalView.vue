@@ -256,17 +256,11 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     body {
         background-color: var(--color-fondo);
         color: var(--color-texto);
         line-height: 1.6;
-    }
-    .contenedor {
-        width: 90%;
-        max-width: 1200px;
-        margin: 0 auto;
     }
 
     html, body {
