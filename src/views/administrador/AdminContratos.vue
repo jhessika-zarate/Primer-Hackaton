@@ -65,7 +65,7 @@
 
 
 
-        
+
         <!-- Main Content -->
         <main class="consultation-main" :class="{ 'with-upload-sidebar': showUploadSidebar }">
             <div class="patient-header">
@@ -75,74 +75,104 @@
 
             <form @submit.prevent="guardarConsulta" class="consultation-form">
                 <!-- Sección de Resultados Públicos -->
-                <section class="form-section public-section rounded-xl shadow-md p-6 bg-white">
-    <header class="section-header mb-6 border-b pb-2">
-        <h3 class="section-title text-2xl font-semibold text-gray-800">Datos del Contrato</h3>
-    </header>
+                <section class="form-section bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+  <header class="section-header bg-blue-600 px-4 py-3">
+    <h3 class="section-title text-lg font-semibold text-white">
+      Datos del Contrato
+    </h3>
+  </header>
 
-    <div class="form-content grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Nombre:</label>
-            <input v-model="contrato.nombre" type="text" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-        </div>
+  <div class="form-content grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+    <!-- Grupo de Campos Personales -->
+    <div class="space-y-3">
+      <h4 class="font-medium text-gray-700 text-sm uppercase tracking-wider mb-2">Información Personal</h4>
+      
+      <div class="input-group">
+        <label class="input-label block text-xs font-medium text-gray-600 mb-1">Nombre:</label>
+        <input v-model="contrato.nombre" type="text" required
+               class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+      </div>
 
+      <div class="grid grid-cols-2 gap-3">
         <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Apellido Paterno:</label>
-            <input v-model="contrato.apellidoPaterno" type="text" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+          <label class="input-label block text-xs font-medium text-gray-600 mb-1">Apellido Paterno:</label>
+          <input v-model="contrato.apellidoPaterno" type="text" required
+                 class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
         </div>
+        <div class="input-group">
+          <label class="input-label block text-xs font-medium text-gray-600 mb-1">Apellido Materno:</label>
+          <input v-model="contrato.apellidoMaterno" type="text" required
+                 class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+      </div>
 
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Apellido Materno:</label>
-            <input v-model="contrato.apellidoMaterno" type="text" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-        </div>
-
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">C.I.:</label>
-            <input v-model="contrato.ci" type="text" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-        </div>
-
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Dirección:</label>
-            <input v-model="contrato.direccion" type="text" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-        </div>
-
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Teléfono:</label>
-            <input v-model="contrato.telefono" type="tel" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-        </div>
-
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Área de Trabajo:</label>
-            <input v-model="contrato.area" type="text" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-        </div>
-
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Cargo:</label>
-            <input v-model="contrato.cargo" type="text" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-        </div>
-
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Fecha de Inicio:</label>
-            <input v-model="contrato.fechaInicio" type="date" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-        </div>
-
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Fecha de Finalización (opcional):</label>
-            <input v-model="contrato.fechaFinal" type="date" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Días de Prueba (opcional):</label>
-            <input v-model="contrato.diasPrueba" type="number" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" min="0" />
-        </div>
-
-        <div class="input-group">
-            <label class="input-label text-sm font-medium text-gray-600">Salario:</label>
-            <input v-model="contrato.salario" type="number" class="contract-input w-full mt-1 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" min="0" required />
-        </div>
+      <div class="input-group">
+        <label class="input-label block text-xs font-medium text-gray-600 mb-1">C.I.:</label>
+        <input v-model="contrato.ci" type="text" required
+               class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+      </div>
     </div>
-</section>
 
+    <!-- Grupo de Datos de Contacto -->
+    <div class="space-y-3">
+      <h4 class="font-medium text-gray-700 text-sm uppercase tracking-wider mb-2">Datos de Contacto</h4>
+
+      <div class="input-group">
+        <label class="input-label block text-xs font-medium text-gray-600 mb-1">Dirección:</label>
+        <input v-model="contrato.direccion" type="text" required
+               class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <div class="input-group">
+        <label class="input-label block text-xs font-medium text-gray-600 mb-1">Teléfono:</label>
+        <input v-model="contrato.telefono" type="tel" required
+               class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+    </div>
+
+    <!-- Grupo de Datos Laborales -->
+    <div class="space-y-3 md:col-span-2 border-t pt-4 mt-2">
+      <h4 class="font-medium text-gray-700 text-sm uppercase tracking-wider mb-2">Datos Laborales</h4>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="input-group">
+          <label class="input-label block text-xs font-medium text-gray-600 mb-1">Área de Trabajo:</label>
+          <input v-model="contrato.area" type="text" required
+                 class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div class="input-group">
+          <label class="input-label block text-xs font-medium text-gray-600 mb-1">Cargo:</label>
+          <input v-model="contrato.cargo" type="text" required
+                 class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="input-group">
+          <label class="input-label block text-xs font-medium text-gray-600 mb-1">Fecha de Inicio:</label>
+          <input v-model="contrato.fechaInicio" type="date" required
+                 class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div class="input-group">
+          <label class="input-label block text-xs font-medium text-gray-600 mb-1">Fecha Final (opcional):</label>
+          <input v-model="contrato.fechaFinal" type="date"
+                 class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div class="input-group">
+          <label class="input-label block text-xs font-medium text-gray-600 mb-1">Días de Prueba (opcional):</label>
+          <input v-model="contrato.diasPrueba" type="number" min="0"
+                 class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label block text-xs font-medium text-gray-600 mb-1">Salario:</label>
+        <input v-model="contrato.salario" type="number" min="0" required
+               class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+    </div>
+  </div>
+</section>
                 <!-- Secciones de Exámenes -->
                 <section v-for="(formulario, index) in formulariosActivos" :key="index" class="form-section"
                     :class="{ 'public-section': formulario.data.esPublico }">
@@ -370,80 +400,80 @@ export default {
             this.formulariosActivos = [];
             this.resultadosPublicos = "";
         },
-        
 
-  async guardarConsulta() {
-    try {
-      // Crear objeto JSON con todos los datos del contrato
-      const contratoData = {
-        // Datos básicos del contrato
-        datosBasicos: { ...this.contrato },
-        
-        // Campos adicionales del sidebar
-        camposAdicionales: this.formulariosActivos.map(form => ({
-          nombre: form.nombre,
-          tipo: form.tipo,
-          contenido: form.data.resultados
-        })),
-        
-        // Metadatos
-        metadata: {
-          fechaGeneracion: new Date().toISOString(),
-          doctor: this.doctorName,
-          paciente: this.currentPatient
-        }
-      };
 
-      // Convertir a JSON
-      const jsonData = JSON.stringify(contratoData, null, 2);
-      console.log(JSON.stringify(contratoData, null, 2) );
-      // Crear blob para descarga
-      const blob = new Blob([jsonData], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      
-      // Crear enlace de descarga
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `contrato_${this.contrato.nombre}_${new Date().getTime()}.json`;
-      document.body.appendChild(a);
-      a.click();
-      
-      // Limpiar
-      setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 100);
+        async guardarConsulta() {
+            try {
+                // Crear objeto JSON con todos los datos del contrato
+                const contratoData = {
+                    // Datos básicos del contrato
+                    datosBasicos: { ...this.contrato },
 
-      // También podrías enviar este JSON a tu backend si lo necesitas
-      // await this.enviarJSONAlBackend(contratoData);
+                    // Campos adicionales del sidebar
+                    camposAdicionales: this.formulariosActivos.map(form => ({
+                        nombre: form.nombre,
+                        tipo: form.tipo,
+                        contenido: form.data.resultados
+                    })),
 
-      alert('Datos del contrato guardados en formato JSON');
-      
-    } catch (error) {
-      console.error('Error al guardar los datos:', error);
-      alert('Error al guardar los datos');
-    }
-  },
+                    // Metadatos
+                    metadata: {
+                        fechaGeneracion: new Date().toISOString(),
+                        doctor: this.doctorName,
+                        paciente: this.currentPatient
+                    }
+                };
 
-  // Método opcional para enviar a un backend
-  async enviarJSONAlBackend(data) {
-    try {
-      const response = await fetch('tu-endpoint-api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+                // Convertir a JSON
+                const jsonData = JSON.stringify(contratoData, null, 2);
+                console.log(JSON.stringify(contratoData, null, 2));
+                // Crear blob para descarga
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                // Crear enlace de descarga
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `contrato_${this.contrato.nombre}_${new Date().getTime()}.json`;
+                document.body.appendChild(a);
+                a.click();
+
+                // Limpiar
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+
+                // También podrías enviar este JSON a tu backend si lo necesitas
+                // await this.enviarJSONAlBackend(contratoData);
+
+                alert('Datos del contrato guardados en formato JSON');
+
+            } catch (error) {
+                console.error('Error al guardar los datos:', error);
+                alert('Error al guardar los datos');
+            }
         },
-        body: JSON.stringify(data)
-      });
-      
-      if (!response.ok) throw new Error('Error en la respuesta del servidor');
-      
-      return await response.json();
-    } catch (error) {
-      console.error('Error al enviar al backend:', error);
-      throw error;
-    }
-  },
+
+        // Método opcional para enviar a un backend
+        async enviarJSONAlBackend(data) {
+            try {
+                const response = await fetch('tu-endpoint-api', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) throw new Error('Error en la respuesta del servidor');
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error al enviar al backend:', error);
+                throw error;
+            }
+        },
 
 
 
