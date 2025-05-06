@@ -1,4 +1,5 @@
 <template>
+  <div class="contrato">
     <div class="contract-container">
         <img src="https://via.placeholder.com/150x50?text=LOGO+EMPRESA" alt="Logo Empresa" class="company-logo">
         
@@ -63,6 +64,7 @@
             <p>Documento generado electrónicamente el <span id="generation-date"></span></p>
         </div>
     </div>
+  </div>
 </template>
     <script>
         // Función para cargar y procesar el JSON
@@ -243,7 +245,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap');
         
-        body {
+        .contrato {
             font-family: 'Noto Serif', serif;
             line-height: 1.6;
             color: #333;
