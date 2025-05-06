@@ -69,18 +69,7 @@
     <script>
         // Función para cargar y procesar el JSON
         async function loadContractData() {
-            try {
-                // En un caso real, esto vendría de un archivo subido o una API
-                // Simulamos la carga de datos con un ejemplo
-                const response = await fetch('contrato.json');
-                const contractData = await response.json();
-                
-                // Mostrar los datos en el contrato
-                displayContractData(contractData);
-            } catch (error) {
-                console.error('Error al cargar el contrato:', error);
-                alert('Error al cargar los datos del contrato');
-            }
+            
         }
         
         // Función para mostrar los datos en el contrato

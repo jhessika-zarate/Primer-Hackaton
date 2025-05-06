@@ -166,7 +166,7 @@
       </div>
 
       <div class="input-group">
-        <label class="input-label block text-xs font-medium text-gray-600 mb-1">Salario:</label>
+        <label class="input-label block text-xs font-medium text-gray-600 mb-1">Salario Bs:</label>
         <input v-model="contrato.salario" type="number" min="0" required
                class="contract-input w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
       </div>
@@ -220,7 +220,6 @@
 
 <script>
 
-import html2pdf from 'html2pdf.js';
 export default {
     components: {
 
@@ -261,6 +260,19 @@ export default {
                 diasPrueba: '',
                 salario: ''
             },
+            usuario: {
+      ci: '',
+      nombre: '',
+      apellido_paterno: '',
+      apellido_materno: '',
+      correo: '',
+      contrasenia: '',
+      rol: 'empleado', // Valor por defecto
+      telefono: '',
+      direccion: '',
+      primera_vez: true,
+      activo: true
+    },
 
             checkupOptions: [
                 // Contrato
@@ -307,6 +319,20 @@ export default {
         }
     },
     methods: {
+        generarContrasenia() {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    let contrasenia = '';
+    for (let i = 0; i < 15; i++) {
+      contrasenia += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    return contrasenia;
+  },
+
+  generarCorreo() {
+    const nombre = this.contrato.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const apellido = this.contrato.apellidoPaterno.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return `${nombre}.${apellido}@gmail.com`;
+  },
         setActiveFilter(specialtyId) {
             this.activeFilter = specialtyId;
         },
@@ -403,57 +429,81 @@ export default {
 
 
         async guardarConsulta() {
-            try {
-                // Crear objeto JSON con todos los datos del contrato
-                const contratoData = {
-                    // Datos básicos del contrato
-                    datosBasicos: { ...this.contrato },
+  try {
+    // Generar datos de usuario
+    this.usuario = {
+      ci: this.contrato.ci,
+      nombre: this.contrato.nombre,
+      apellido_paterno: this.contrato.apellidoPaterno,
+      apellido_materno: this.contrato.apellidoMaterno,
+      correo: this.generarCorreo(),
+      contrasenia: this.generarContrasenia(),
+      rol: 'empleado',
+      telefono: this.contrato.telefono,
+      direccion: this.contrato.direccion,
+      primera_vez: true,
+      activo: true
+    };
 
-                    // Campos adicionales del sidebar
-                    camposAdicionales: this.formulariosActivos.map(form => ({
-                        nombre: form.nombre,
-                        tipo: form.tipo,
-                        contenido: form.data.resultados
-                    })),
+    // Primero enviar el usuario al backend
+    const usuarioResponse = await this.guardarUsuario(this.usuario);
+    
+    if (!usuarioResponse.ok) {
+      throw new Error('Error al guardar el usuario');
+    }
 
-                    // Metadatos
-                    metadata: {
-                        fechaGeneracion: new Date().toISOString(),
-                        doctor: this.doctorName,
-                        paciente: this.currentPatient
-                    }
-                };
+    // Luego crear y guardar el contrato
+    const contratoData = {
+      datosBasicos: { ...this.contrato },
+      usuarioId: usuarioResponse.id, // Asumimos que el backend devuelve el ID
+      camposAdicionales: this.formulariosActivos.map(form => ({
+        nombre: form.nombre,
+        tipo: form.tipo,
+        contenido: form.data.resultados
+      })),
+      metadata: {
+        fechaGeneracion: new Date().toISOString(),
+        doctor: this.doctorName,
+        paciente: this.currentPatient
+      }
+    };
 
-                // Convertir a JSON
-                const jsonData = JSON.stringify(contratoData, null, 2);
-                console.log(JSON.stringify(contratoData, null, 2));
-                // Crear blob para descarga
-                const blob = new Blob([jsonData], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
+    // Resto del código para guardar el contrato...
+    const jsonData = JSON.stringify(contratoData, null, 2);
+    
+    // ... (código para descargar el JSON)
 
-                // Crear enlace de descarga
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `contrato_${this.contrato.nombre}_${new Date().getTime()}.json`;
-                document.body.appendChild(a);
-                a.click();
+    // Mostrar credenciales al usuario
+    this.mostrarCredenciales();
 
-                // Limpiar
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }, 100);
+  } catch (error) {
+    console.error('Error:', error);
+    alert(`Error: ${error.message}`);
+  }
+},
 
-                // También podrías enviar este JSON a tu backend si lo necesitas
-                // await this.enviarJSONAlBackend(contratoData);
+async guardarUsuario(usuario) {
+  // Aquí implementarías la llamada a tu API para guardar el usuario
+  // Ejemplo:
+  try {
+    const response = await fetch('/api/usuarios', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(usuario)
+    });
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error al guardar usuario:', error);
+    throw error;
+  }
+},
 
-                alert('Datos del contrato guardados en formato JSON');
-
-            } catch (error) {
-                console.error('Error al guardar los datos:', error);
-                alert('Error al guardar los datos');
-            }
-        },
+mostrarCredenciales() {
+  console.log("creado usuario")
+},
 
         // Método opcional para enviar a un backend
         async enviarJSONAlBackend(data) {

@@ -69,6 +69,7 @@ path: '/personal/perfil',
       name: 'administrador',
       component: AdminContratos,
       meta: { showAdminNav: true }, // Mostrar navbar de asist
+    },{
       path: '/administrador/gestion-personal',
       name: 'gestion-personal',
       component: GestionPersonalView
