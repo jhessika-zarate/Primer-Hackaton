@@ -219,6 +219,8 @@
 </template>
 
 <script>
+import { useUsuarioStore } from '@/stores/usuarioStore';
+import Swal from 'sweetalert2';
 
 export default {
     components: {
@@ -247,32 +249,25 @@ export default {
             resultadosPublicos: "",
             uploadedFiles: [],
             contrato: {
-                nombre: '',
-                apellidoPaterno: '',
-                apellidoMaterno: '',
-                ci: '',
-                direccion: '',
-                telefono: '',
+                id_usuario: '',
                 area: '',
                 cargo: '',
                 fechaInicio: '',
                 fechaFinal: '',
                 diasPrueba: '',
-                salario: ''
+                salario: '',
+                estructura:''
             },
             usuario: {
-      ci: '',
-      nombre: '',
-      apellido_paterno: '',
-      apellido_materno: '',
-      correo: '',
-      contrasenia: '',
-      rol: 'empleado', // Valor por defecto
-      telefono: '',
-      direccion: '',
-      primera_vez: true,
-      activo: true
-    },
+                ci: '',
+                nombre: '',
+                apellido_paterno: '',
+                apellido_materno: '',
+                correo: '',
+                contrasenia: '', // Valor por defecto
+                telefono: '',
+                direccion: '',
+                },
 
             checkupOptions: [
                 // Contrato
@@ -438,24 +433,23 @@ export default {
       apellido_materno: this.contrato.apellidoMaterno,
       correo: this.generarCorreo(),
       contrasenia: this.generarContrasenia(),
-      rol: 'empleado',
       telefono: this.contrato.telefono,
       direccion: this.contrato.direccion,
-      primera_vez: true,
-      activo: true
     };
+
+
 
     // Primero enviar el usuario al backend
     const usuarioResponse = await this.guardarUsuario(this.usuario);
     
-    if (!usuarioResponse.ok) {
+    if (!usuarioResponse) {
       throw new Error('Error al guardar el usuario');
     }
-
+    
+    this.contrato.id_usuario = usuarioResponse;
     // Luego crear y guardar el contrato
     const contratoData = {
       datosBasicos: { ...this.contrato },
-      usuarioId: usuarioResponse.id, // Asumimos que el backend devuelve el ID
       camposAdicionales: this.formulariosActivos.map(form => ({
         nombre: form.nombre,
         tipo: form.tipo,
@@ -468,9 +462,15 @@ export default {
       }
     };
 
+
+
     // Resto del código para guardar el contrato...
     const jsonData = JSON.stringify(contratoData, null, 2);
     
+    this.contrato.estructura = jsonData;
+
+    console.log("contrato a mandar,",this.contrato)
+
     // ... (código para descargar el JSON)
 
     // Mostrar credenciales al usuario
@@ -483,22 +483,21 @@ export default {
 },
 
 async guardarUsuario(usuario) {
-  // Aquí implementarías la llamada a tu API para guardar el usuario
-  // Ejemplo:
-  try {
-    const response = await fetch('/api/usuarios', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(usuario)
-    });
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error al guardar usuario:', error);
-    throw error;
-  }
+  const usuarioStore = useUsuarioStore();
+
+  // Mostrar el correo y la contraseña antes de guardar
+  Swal.fire({
+    title: 'Datos del Usuario',
+    html: `
+      <p><strong>Correo:</strong> ${usuario.correo}</p>
+      <p><strong>Contraseña:</strong> ${usuario.contrasenia}</p>
+    `,
+    icon: 'info',
+    confirmButtonText: 'Continuar'
+  });
+
+  const respuesta = await usuarioStore.crearUsuario(usuario);
+  return respuesta.user.id_usuario;
 },
 
 mostrarCredenciales() {
