@@ -250,8 +250,9 @@
             line-height: 1.6;
             color: #333;
             max-width: 800px;
+            padding-top: 4rem;
             margin: 0 auto;
-            padding: 40px;
+            padding: 10rem;
             background-color: #f9f9f9;
         }
         
